@@ -15,6 +15,7 @@
 		"16": "icon-16.png"
 	},
 	"description": "Run your magic dots here.",
+	"update_url": "https://raw.github.com/caseman72/chrome-magicdots/master/update_manifest.xml",
 	"browser_action": {
 		"default_popup": "popup.html",
 		"default_title": "Magic Dots",
