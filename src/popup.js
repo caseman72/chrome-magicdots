@@ -61,6 +61,9 @@ $(function() {
 				// update local storage
 				var dots = localStorage["magicdots"] = parseInt(localStorage["magicdots"] || 0, 10) + 1;
 				chrome.extension.sendMessage({type: "MagicDotAdded", dots: dots});
+
+				// add title to button
+				$("body,button,canvas").attr("title", (new Date()).toLocaleTimeString());
 			}
 
 			// logic code
