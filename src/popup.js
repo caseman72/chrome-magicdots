@@ -63,7 +63,8 @@ $(function() {
 				chrome.extension.sendMessage({type: "MagicDotAdded", dots: dots});
 
 				// add title to button
-				$("body,button,canvas").attr("title", (new Date()).toLocaleTimeString());
+				var lastdot = localStorage["lastdot"] = (new Date()).toLocaleTimeString();
+				$("body,button,canvas").attr("title", lastdot);
 			}
 
 			// logic code
@@ -138,5 +139,7 @@ $(function() {
 		// 2 buttons ...
 		$("#magic-reset").on("click", $.todot.reset);
 		$("#magic-dot").on("click", $.todot.addDot).focus();
+		$("body,button,canvas").attr("title", localStorage["lastdot"] || "");
+
 	}
 });
