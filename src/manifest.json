@@ -1,0 +1,24 @@
+{
+	"permissions": [
+		"notifications",
+		"tabs",
+		"*://*/*"
+	],
+	"background": {
+		"scripts": ["background.js"]
+	},
+	"version": "1.1.2",
+	"name": "Magic Dots",
+	"icons": {
+		"128": "icon-128.png",
+		"48": "icon-48.png",
+		"16": "icon-16.png"
+	},
+	"description": "Run your magic dots here.",
+	"browser_action": {
+		"default_popup": "popup.html",
+		"default_title": "Magic Dots",
+		"default_icon": "icon-19.png"
+	},
+	"manifest_version": 2
+}
