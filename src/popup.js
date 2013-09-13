@@ -158,11 +158,6 @@ $(function() {
 			opts.addDot(true);
 		}
 
-		// initally show first canvas
-		if (!dots) {
-			opts.addDot();
-		}
-
 		// 2 buttons ...
 		$("#magic-reset").on("click", opts.reset);
 		$("#magic-dot").on("click", opts.addDot).focus();
