@@ -14,8 +14,8 @@ chrome.extension.onMessage.addListener(function(msg, sender, sendResponse) {
 			iconUrl: "icon-128.png"
 		};
 
-		// 5 minutes from now
-		var expire = (new Date()).getTime() + (6 * 60E3) - 15E3;
+		// 5 minutes from now - 10 secs
+		var expire = (new Date()).getTime() + (6 * 60E3) - 10E3;
 
 		// function to notify
 		var notify = function() {

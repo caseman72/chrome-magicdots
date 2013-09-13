@@ -13,15 +13,30 @@ $(function() {
 		dotnum: 0,
 		hournum: 0,
 
+		formatSeconds: function(secs) {
+			secs = parseInt(secs || 0, 10);
+
+			var pad = function(val) {
+				return val < 10 ? "0"+val : ""+val;
+			};
+
+			var hours = pad(Math.floor(secs / 3600) % 24);
+			var minutes = pad(Math.floor(secs / 60) % 60);
+			var seconds = pad(secs % 60);
+
+			return [hours, minutes, seconds].join(":");
+		},
+
 		// methods
-		addCanvas: function() {
+		addCanvas: function(skip) {
 			var opts = $.todot;
 
 			// add canvas to body or ...
-			var canvas = $("body")
+			var canvas = $("#magic-canvas")
+				.find("canvas").remove().end()
 				.append("<canvas style='margin: 0.5em' width='"+ opts.width +"' height='"+ opts.height +"'></canvas>")
-				.find("canvas:last");
-
+				.find("canvas");
+				
 			// init and save to opts
 			var context = opts.context = canvas.get(0).getContext("2d");
 
@@ -39,19 +54,26 @@ $(function() {
 			context.fillStyle = "#000000";
 			context.strokeRect(0, 0, opts.width, opts.height);
 			context.fill();
+
+			if (skip !== true) {
+				localStorage["magictimestart"] = (new Date()).toLocaleTimeString(); 
+				localStorage["magictimedot"] = Math.floor((new Date()).getTime() / 1E3);
+			}
+
+			// update
+			$("#magic-time-start").text(localStorage["magictimestart"]);
+			$("#magic-time-since").text(opts.formatSeconds(0));
 		},
 		reset: function() {
+			var opts = $.todot;
+
 			// reset
 			localStorage["magicdots"] = 0;
 
-			// remove all canvases
-			$("body").find("canvas").remove();
-
 			// reset all
-			$.todot.context = null;
-			$.todot.dotnum = 0;
-			$.todot.hournum = 0;
-			$.addCanvas();
+			opts.hournum = 0;
+			opts.context = null;
+			opts.addCanvas();
 		},
 		addDot: function(skip) {
 			var opts = $.todot;
@@ -64,7 +86,10 @@ $(function() {
 
 				// add title to button
 				var lastdot = localStorage["lastdot"] = (new Date()).toLocaleTimeString();
-				$("body,button,canvas").attr("title", lastdot);
+				localStorage["magictimedot"] = Math.floor((new Date()).getTime() / 1E3);
+
+				$("body,button,canvas,div").attr("title", lastdot);
+				$("#magic-time-since").text(opts.formatSeconds(0));
 			}
 
 			// logic code
@@ -75,7 +100,7 @@ $(function() {
 			// dots
 			if (!context || dotnum > 9) {
 				// new magic dots
-				opts.addCanvas();
+				opts.addCanvas(skip);
 			}
 			else {
 				if (dotnum < 4) {
@@ -123,23 +148,42 @@ $(function() {
 
 	var body = $("body");
 	if (!body.hasClass("magic-init")) {
+		var opts = $.todot;
+
 		body.addClass("magic-init");
 
 		// on show click the add button until we are back
 		var dots = parseInt(localStorage["magicdots"] || 0, 10);
 		for (var i=0; i<dots; i++) {
-			$.todot.addDot(true);
+			opts.addDot(true);
 		}
 
 		// initally show first canvas
 		if (!dots) {
-			$.todot.addDot();
+			opts.addDot();
 		}
 
 		// 2 buttons ...
-		$("#magic-reset").on("click", $.todot.reset);
-		$("#magic-dot").on("click", $.todot.addDot).focus();
-		$("body,button,canvas").attr("title", localStorage["lastdot"] || "");
+		$("#magic-reset").on("click", opts.reset);
+		$("#magic-dot").on("click", opts.addDot).focus();
+		$("body,button,canvas,div").attr("title", localStorage["lastdot"] || "");
+		$("#magic-time-start").text(localStorage["magictimestart"] || "");
 
+		// time since
+		var updateTime = function() {
+			var formatSeconds = $.todot.formatSeconds;
+			var lastdot = parseInt(localStorage["magictimedot"] || 0, 10);
+			var nowdot = Math.floor((new Date()).getTime() / 1E3);
+
+			if (lastdot && nowdot > lastdot) {
+				$("#magic-time-since").text(formatSeconds(nowdot - lastdot));
+			}
+			else {
+				$("#magic-time-since").text("00:00:00");
+			}
+
+			setTimeout(updateTime, 5E2);
+		};
+		updateTime();
 	}
 });
