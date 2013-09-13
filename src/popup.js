@@ -160,7 +160,7 @@ $(function() {
 
 		// initally show first canvas
 		if (!dots) {
-			opts.addCanvas();
+			opts.addDot();
 		}
 
 		// 2 buttons ...
